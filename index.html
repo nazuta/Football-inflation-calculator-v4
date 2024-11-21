@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Transfer Inflation Calculator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+    --background-color: #ffffff;
+    --text-color: #1d1d1f;
+    --accent-color: #0066cc;
+    --border-color: #d2d2d7;
+    --highlight-color: #f5f5f7;
+    --card-background: #f5f5f7;
+}
+.dark-theme {
+    --background-color: #1d1d1f;
+    --text-color: #f5f5f7;
+    --accent-color: #2997ff;
+    --border-color: #424245;
+    --highlight-color: #2c2c2e;
+    --card-background: #2c2c2e;
+}
+.card {
+    background-color: var(--card-background);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.47059;
+            font-weight: 400;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        header {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: saturate(180%) blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 20px 0;
+            box-shadow: 0 1px 0 rgba(0,0,0,0.1);
+            transition: background-color 0.3s;
+        }
+        .dark-theme header {
+            background-color: rgba(29, 29, 31, 0.8);
+            box-shadow: 0 1px 0 rgba(255,255,255,0.1);
+        }
+        .header-content {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 0 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        h1 {
+            font-size: 24px;
+            line-height: 1.08349;
+            font-weight: 600;
+            letter-spacing: -.003em;
+            margin: 0;
+        }
+        .container {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 40px 22px;
+        }
+        .input-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .input-group {
+            flex: 1 1 calc(33.333% - 16px);
+            min-width: 200px;
+            position: relative;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 17px;
+            font-weight: 400;
+            color: #86868b;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            font-size: 17px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.1);
+        }
+        .tooltip {
+            position: absolute;
+            background-color: var(--text-color);
+            color: var(--background-color);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            margin-bottom: 8px;
+        }
+        .input-group:hover .tooltip {
+            opacity: 1;
+        }
+        #adjustedValue {
+            font-size: 48px;
+            font-weight: 600;
+            text-align: center;
+            margin: 0;
+            color: var(--accent-color);
+        }
+        .card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        th {
+            font-weight: 600;
+            color: #86868b;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        tr.highlighted {
+            background-color: rgba(0, 102, 204, 0.1);
+        }
+        #transferChart {
+            margin-top: 16px;
+        }
+        .info-text {
+            font-size: 17px;
+            line-height: 1.47059;
+            color: #86868b;
+            margin-bottom: 16px;
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .theme-switch {
+            width: 50px;
+            height: 24px;
+            background-color: var(--border-color);
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .theme-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--background-color);
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+        }
+        .dark-theme .theme-switch::after {
+            transform: translateX(26px);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Football Transfer Inflation Calculator</h1>
+            <div class="theme-switch" id="themeSwitch"></div>
+        </div>
+    </header>
+    <div class="container">
+        <div class="info-text fade-in">
+            Calculate how the value of a football transfer would change over time due to market inflation. Enter a transfer amount, select the original season, and the season to adjust to.
+        </div>
+        <div class="card fade-in">
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="transferPrice">Transfer Price</label>
+                    <input type="text" id="transferPrice" placeholder="€50 000 000" value="€50 000 000">
+                    <div class="tooltip">Enter the original transfer price</div>
+                </div>
+                <div class="input-group">
+                    <label for="fromSeason">From Season</label>
+                    <select id="fromSeason"></select>
+                    <div class="tooltip">Select the season of the original transfer</div>
+                </div>
+                <div class="input-group">
+                    <label for="toSeason">To Season</label>
+                    <select id="toSeason"></select>
+                    <div class="tooltip">Select the season to adjust the transfer price to</div>
+                </div>
+            </div>
+        </div>
+        <div class="card fade-in">
+            <div id="adjustedValue"></div>
+        </div>
+        <div class="card fade-in">
+            <canvas id="transferChart"></canvas>
+        </div>
+        <div class="card fade-in">
+            <table id="priceTable">
+                <thead>
+                    <tr>
+                        <th>Season</th>
+                        <th>Price</th>
+                        <th>Growth %</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const transferData = [
+            { year: "2013/14", value: 1.00, percentage: 0 },
+            { year: "2014/15", value: 1.17, percentage: 17 },
+            { year: "2015/16", value: 1.31, percentage: 31 },
+            { year: "2016/17", value: 1.67, percentage: 67 },
+            { year: "2017/18", value: 1.99, percentage: 99 },
+            { year: "2018/19", value: 1.94, percentage: 94 },
+            { year: "2019/20", value: 2.18, percentage: 118 },
+            { year: "2020/21", value: 2.61, percentage: 161 },
+            { year: "2021/22", value: 1.98, percentage: 98 },
+            { year: "2022/23", value: 2.16, percentage: 116 },
+            { year: "2023/24", value: 2.34, percentage: 134 },
+            { year: "2024/25", value: 2.52, percentage: 152 }
+        ];
+
+        const transferPriceInput = document.getElementById('transferPrice');
+        const fromSeasonSelect = document.getElementById('fromSeason');
+        const toSeasonSelect = document.getElementById('toSeason');
+        const adjustedValueDiv = document.getElementById('adjustedValue');
+        const priceTable = document.getElementById('priceTable').getElementsByTagName('tbody')[0];
+        const ctx = document.getElementById('transferChart').getContext('2d');
+        const themeSwitch = document.getElementById('themeSwitch');
+
+        // Theme switcher
+        themeSwitch.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+            updateChartTheme();
+        });
+
+        // Initialize Cleave.js for transfer price input
+        new Cleave(transferPriceInput, {
+            numeral: true,
+            numeralThousandsGroupStyle: 'thousand',
+            prefix: '€',
+            numeralPositiveOnly: true,
+            numeralDecimalScale: 0
+        });
+
+        transferData.forEach(data => {
+            const option = new Option(data.year, data.year);
+            fromSeasonSelect.add(option.cloneNode(true));
+            toSeasonSelect.add(option);
+        });
+
+        function updateResults() {
+            const price = parseFloat(transferPriceInput.value.replace(/[^0-9.-]+/g,""));
+            const fromYear = fromSeasonSelect.value;
+            const toYear = toSeasonSelect.value;
+
+            if (isNaN(price) || !fromYear || !toYear) return;
+
+            const fromIndex = transferData.findIndex(data => data.year === fromYear);
+            const toIndex = transferData.findIndex(data => data.year === toYear);
+            const adjustedPrice = price * (transferData[toIndex].value / transferData[fromIndex].value);
+
+            adjustedValueDiv.textContent = `Adjusted Value: €${adjustedPrice.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, " ")}`;
+
+            priceTable.innerHTML = '';
+            transferData.forEach((data, index) => {
+                const row = priceTable.insertRow();
+                row.insertCell(0).textContent = data.year;
+                const adjustedValue = price * (data.value / transferData[fromIndex].value);
+                row.insertCell(1).textContent = `€${adjustedValue.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, " ")}`;
+                row.insertCell(2).textContent = index === 0 ? '-' : `${data.percentage}%`;
+                
+                if (index >= Math.min(fromIndex, toIndex) && index <= Math.max(fromIndex, toIndex)) {
+                    row.classList.add('highlighted');
+                }
+            });
+
+            updateChart(price, fromIndex, toIndex);
+        }
+
+        function updateChart(initialPrice, fromIndex, toIndex) {
+            const labels = transferData.map(data => data.year);
+            const data = transferData.map((data, index) => initialPrice * (data.value / transferData[fromIndex].value));
+
+            if (window.myChart) window.myChart.destroy();
+            window.myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Transfer Price',
+                        data: data,
+                        borderColor: getComputedStyle(document.body).getPropertyValue('--accent-color'),
+                        backgroundColor: `${getComputedStyle(document.body).getPropertyValue('--accent-color')}33`,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value, index, values) {
+                                    return '€' + value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                                },
+                                color: getComputedStyle(document.body).getPropertyValue('--text-color')
+                            },
+                            grid: {
+                                color: getComputedStyle(document.body).getPropertyValue('--border-color')
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: getComputedStyle(document.body).getPropertyValue('--text-color')
+                            },
+                            grid: {
+                                color: getComputedStyle(document.body).getPropertyValue('--border-color')
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += '€' + context.parsed.y.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                                    }
+                                    return label;
+                                }
+                            }
+                        },
+                        legend: {
+                            labels: {
+                                color: getComputedStyle(document.body).getPropertyValue('--text-color')
+                            }
+                        }
+                    }
+                }
+            });
+        }
+                function updateChartTheme() {
+            if (window.myChart) {
+                window.myChart.options.scales.y.ticks.color = getComputedStyle(document.body).getPropertyValue('--text-color');
+                window.myChart.options.scales.x.ticks.color = getComputedStyle(document.body).getPropertyValue('--text-color');
+                window.myChart.options.scales.y.grid.color = getComputedStyle(document.body).getPropertyValue('--border-color');
+                window.myChart.options.scales.x.grid.color = getComputedStyle(document.body).getPropertyValue('--border-color');
+                window.myChart.options.plugins.legend.labels.color = getComputedStyle(document.body).getPropertyValue('--text-color');
+                window.myChart.data.datasets[0].borderColor = getComputedStyle(document.body).getPropertyValue('--accent-color');
+                window.myChart.data.datasets[0].backgroundColor = `${getComputedStyle(document.body).getPropertyValue('--accent-color')}33`;
+                window.myChart.update();
+            }
+        }
+
+        transferPriceInput.addEventListener('input', updateResults);
+        fromSeasonSelect.addEventListener('change', updateResults);
+        toSeasonSelect.addEventListener('change', updateResults);
+
+        // Встановлення початкових значень і розрахунок при завантаженні
+        window.addEventListener('load', () => {
+            fromSeasonSelect.value = "2013/14";
+            toSeasonSelect.value = "2024/25";
+            updateResults();
+
+            // Анімація появи елементів
+            setTimeout(() => {
+                document.querySelectorAll('.fade-in').forEach((el, index) => {
+                    setTimeout(() => {
+                        el.classList.add('visible');
+                    }, index * 100);
+                });
+            }, 100);
+        });
+    </script>
+</body>
+</html>
