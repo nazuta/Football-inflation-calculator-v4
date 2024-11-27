@@ -320,29 +320,36 @@
             const fromYear = fromSeasonSelect.value;
             const toYear = toSeasonSelect.value;
 
-            if (isNaN(price) || !fromYear || !toYear) return;
+    if (isNaN(price) || !fromYear || !toYear) return;
 
-            const fromIndex = transferData.findIndex(data => data.year === fromYear);
-            const toIndex = transferData.findIndex(data => data.year === toYear);
-            const adjustedPrice = price * (transferData[toIndex].value / transferData[fromIndex].value);
+    const fromIndex = transferData.findIndex(data => data.year === fromYear);
+    const toIndex = transferData.findIndex(data => data.year === toYear);
+    const adjustedPrice = price * (transferData[toIndex].value / transferData[fromIndex].value);
 
-            adjustedValueDiv.textContent = `Adjusted Value: €${adjustedPrice.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, " ")}`;
+    adjustedValueDiv.textContent = `Adjusted Value: €${adjustedPrice.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, " ")}`;
 
-            priceTable.innerHTML = '';
-            transferData.forEach((data, index) => {
-                const row = priceTable.insertRow();
-                row.insertCell(0).textContent = data.year;
-                const adjustedValue = price * (data.value / transferData[fromIndex].value);
-                row.insertCell(1).textContent = `€${adjustedValue.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, " ")}`;
-                row.insertCell(2).textContent = index === 0 ? '-' : `${data.percentage}%`;
-                
-                if (index >= Math.min(fromIndex, toIndex) && index <= Math.max(fromIndex, toIndex)) {
-                    row.classList.add('highlighted');
-                }
-            });
-
-            updateChart(price, fromIndex, toIndex);
+    priceTable.innerHTML = '';
+    transferData.forEach((data, index) => {
+        const row = priceTable.insertRow();
+        row.insertCell(0).textContent = data.year;
+        const adjustedValue = price * (data.value / transferData[fromIndex].value);
+        row.insertCell(1).textContent = `€${adjustedValue.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, " ")}`;
+        
+        // Розрахунок відсотка зростання відносно вибраного року
+        if (index === fromIndex) {
+            row.insertCell(2).textContent = '-';
+        } else {
+            const growthPercentage = ((data.value / transferData[fromIndex].value) - 1) * 100;
+            row.insertCell(2).textContent = `${growthPercentage.toFixed(2)}%`;
         }
+        
+        if (index >= Math.min(fromIndex, toIndex) && index <= Math.max(fromIndex, toIndex)) {
+            row.classList.add('highlighted');
+        }
+    });
+
+    updateChart(price, fromIndex, toIndex);
+}
 
         function updateChart(initialPrice, fromIndex, toIndex) {
             const labels = transferData.map(data => data.year);
