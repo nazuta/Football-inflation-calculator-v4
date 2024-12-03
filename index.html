@@ -440,6 +440,7 @@ window.addEventListener('load', () => {
     fromSeasonSelect.value = "2013-14";  // Базовий рік
     toSeasonSelect.value = transferData[transferData.length - 1].year;  // Останній рік у масиві
     updateResults();
+    setTimeout(updateResults, 0);
 
     // Анімація появи елементів
     setTimeout(() => {
