@@ -434,10 +434,22 @@
         fromSeasonSelect.addEventListener('change', updateResults);
         toSeasonSelect.addEventListener('change', updateResults);
 
-        // Встановлення початкових значень і розрахунок при завантаженні
-        window.addEventListener('load', () => {
-           fromSeasonSelect.value = "2013-14";  // Базовий рік
-            toSeasonSelect.value = transferData[transferData.length - 1].year;  // Останній рік у масиві
+ 
+     // Встановлення початкових значень і розрахунок при завантаженні
+window.addEventListener('load', () => {
+    fromSeasonSelect.value = "2013-14";  // Базовий рік
+    toSeasonSelect.value = transferData[transferData.length - 1].year;  // Останній рік у масиві
+    updateResults();
+
+    // Анімація появи елементів
+    setTimeout(() => {
+        document.querySelectorAll('.fade-in').forEach((el, index) => {
+            setTimeout(() => {
+                el.classList.add('visible');
+            }, index * 100);
+        });
+    }, 100);
+});
 
             // Анімація появи елементів
             setTimeout(() => {
