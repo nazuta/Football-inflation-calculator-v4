@@ -24,4 +24,164 @@ body {
     padding: 0;
     transition: background-color 0.3s, color 0.3s;
 }
-/* Решта CSS-стилів... */
+header {
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: saturate(180%) blur(20px);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 20px 0;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.1);
+    transition: background-color 0.3s;
+}
+.dark-theme header {
+    background-color: rgba(29, 29, 31, 0.8);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.1);
+}
+.header-content {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+h1 {
+    font-size: 24px;
+    line-height: 1.08349;
+    font-weight: 600;
+    letter-spacing: -.003em;
+    margin: 0;
+}
+.container {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 40px 22px;
+}
+.input-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.input-group {
+    flex: 1 1 calc(33.333% - 16px);
+    min-width: 200px;
+    position: relative;
+}
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 17px;
+    font-weight: 400;
+    color: #86868b;
+}
+input, select {
+    width: 100%;
+    padding: 12px;
+    font-size: 17px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.1);
+}
+.tooltip {
+    position: absolute;
+    background-color: var(--text-color);
+    color: var(--background-color);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    margin-bottom: 8px;
+}
+.input-group:hover .tooltip {
+    opacity: 1;
+}
+#adjustedValue {
+    font-size: 48px;
+    font-weight: 600;
+    text-align: center;
+    margin: 0;
+    color: var(--accent-color);
+}
+.card {
+    background-color: var(--card-background);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+th, td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+th {
+    font-weight: 600;
+    color: #86868b;
+}
+tr:last-child td {
+    border-bottom: none;
+}
+tr.highlighted {
+    background-color: rgba(0, 102, 204, 0.1);
+}
+#transferChart {
+    margin-top: 16px;
+}
+.info-text {
+    font-size: 17px;
+    line-height: 1.47059;
+    color: #86868b;
+    margin-bottom: 16px;
+}
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.theme-switch {
+    width: 50px;
+    height: 24px;
+    background-color: var(--border-color);
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.theme-switch::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: var(--background-color);
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s;
+}
+.dark-theme .theme-switch::after {
+    transform: translateX(26px);
+}
