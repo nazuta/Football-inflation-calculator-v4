@@ -93,9 +93,9 @@ function updateResults() {
     updateChart(price, fromIndex, toIndex, filteredData);
 }
 
-        function updateChart(initialPrice, fromIndex, toIndex) {
-            const labels = transferData.map(data => data.year);
-            const data = transferData.map((data, index) => initialPrice * (data.value / transferData[fromIndex].value));
+        function updateChart(initialPrice, fromIndex, toIndex, filteredData) {
+                const labels = filteredData.map(data => data.year);
+                const data = filteredData.map((data, index) => initialPrice * (data.value / filteredData[0].value));
 
             if (window.myChart) window.myChart.destroy();
             window.myChart = new Chart(ctx, {
