@@ -60,40 +60,38 @@ const transferData = [
             toSeasonSelect.add(option);
         });
 
-        function updateResults() {
-            const price = parseFloat(transferPriceInput.value.replace(/[^0-9.-]+/g,""));
-            const fromYear = fromSeasonSelect.value;
-            const toYear = toSeasonSelect.value;
+function updateResults() {
+    const price = parseFloat(transferPriceInput.value.replace(/[^0-9.-]+/g,""));
+    const fromYear = fromSeasonSelect.value;
+    const toYear = toSeasonSelect.value;
 
-            if (isNaN(price) || !fromYear || !toYear) return;
+    if (isNaN(price) || !fromYear || !toYear) return;
 
-            const fromIndex = transferData.findIndex(data => data.year === fromYear);
-            const toIndex = transferData.findIndex(data => data.year === toYear);
-            const adjustedPrice = price * (transferData[toIndex].value / transferData[fromIndex].value);
+    const fromIndex = transferData.findIndex(data => data.year === fromYear);
+    const toIndex = transferData.findIndex(data => data.year === toYear);
+    const filteredData = transferData.slice(fromIndex, toIndex + 1);
 
-            adjustedValueDiv.textContent = `Adjusted Value: €${adjustedPrice.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, " ")}`;
+    const adjustedPrice = price * (transferData[toIndex].value / transferData[fromIndex].value);
 
-            priceTable.innerHTML = '';
-            transferData.forEach((data, index) => {
-                const row = priceTable.insertRow();
-                row.insertCell(0).textContent = data.year;
-                const adjustedValue = price * (data.value / transferData[fromIndex].value);
-                row.insertCell(1).textContent = `€${adjustedValue.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, " ")}`;
-                
-                if (index === fromIndex) {
-                    row.insertCell(2).textContent = '-';
-                } else {
-                    const growthPercentage = ((data.value / transferData[fromIndex].value) - 1) * 100;
-                    row.insertCell(2).textContent = `${growthPercentage.toFixed(2)}%`;
-                }
-                
-                if (index >= Math.min(fromIndex, toIndex) && index <= Math.max(fromIndex, toIndex)) {
-                    row.classList.add('highlighted');
-                }
-            });
+    adjustedValueDiv.textContent = `Adjusted Value: €${adjustedPrice.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, " ")}`;
 
-            updateChart(price, fromIndex, toIndex);
+    priceTable.innerHTML = '';
+    filteredData.forEach((data, index) => {
+        const row = priceTable.insertRow();
+        row.insertCell(0).textContent = data.year;
+        const adjustedValue = price * (data.value / filteredData[0].value);
+        row.insertCell(1).textContent = `€${adjustedValue.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, " ")}`;
+
+        if (index === 0) {
+            row.insertCell(2).textContent = '-';
+        } else {
+            const growthPercentage = ((data.value / filteredData[0].value) - 1) * 100;
+            row.insertCell(2).textContent = `${growthPercentage.toFixed(2)}%`;
         }
+    });
+
+    updateChart(price, fromIndex, toIndex, filteredData);
+}
 
         function updateChart(initialPrice, fromIndex, toIndex) {
             const labels = transferData.map(data => data.year);
