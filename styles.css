@@ -186,17 +186,11 @@ tr.highlighted {
     transform: translateX(26px);
 }
 /* Стилі для SEO-тексту */
-.seo-text-container {
-    max-width: 980px;
-    margin: 0 auto 40px;
-    padding: 0 22px;
-}
-
 .seo-text {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
-    background-color: var(--highlight-color);
+    background-color: var(--card-background);
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     font-family: 'Inter', sans-serif;
