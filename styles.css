@@ -187,7 +187,7 @@ tr.highlighted {
 }
 /* Стилі для SEO-тексту */
 .seo-text {
-    max-width: 800px;
+    max-width: 980px;
     margin: 0 auto;
     padding: 20px;
     background-color: var(--card-background);
