@@ -185,6 +185,41 @@ tr.highlighted {
 .dark-theme .theme-switch::after {
     transform: translateX(26px);
 }
+
+.header-buttons {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.formation-builder-button {
+    background-color: var(--accent-color);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.formation-builder-button:hover {
+    background-color: #005bb5;
+}
+
+.new-tag {
+    background-color: #ffcc00;
+    color: #1d1d1f;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 8px;
+    text-transform: uppercase;
+}
+
 /* Стилі для SEO-тексту */
 .seo-text {
     max-width: 980px;
